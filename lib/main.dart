@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_netflix_clone/repository/hot.dart';
+import 'package:flutter_netflix_clone/repository/original.dart';
+import 'package:flutter_netflix_clone/repository/preview.dart';
+import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
 
@@ -6,12 +10,21 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primaryColor: Colors.black,
-      ),
-      home: NetflixMainPage(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(builder: (_) => Preview()),
+        ChangeNotifierProvider(builder: (_) => Original()),
+        ChangeNotifierProvider(builder: (_) => Hot()),
+      ],
+      child: Consumer<Preview>(builder: (context, preview, _) {
+        return MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            primaryColor: Colors.black,
+          ),
+          home: NetflixMainPage(),
+        );
+      }),
     );
   }
 }
@@ -26,6 +39,10 @@ class _NetflixMainPageState extends State<NetflixMainPage> {
 
   @override
   Widget build(BuildContext context) {
+    final preview = Provider.of<Preview>(context);
+    final original = Provider.of<Original>(context);
+    final hot = Provider.of<Hot>(context);
+
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -62,90 +79,109 @@ class _NetflixMainPageState extends State<NetflixMainPage> {
           children: <Widget>[
             Column(
               children: <Widget>[
-                Image.network(
-                  'https://static1.showtimes.com/poster/660x980/riverdale-netflix-131772.jpg',
-                  width: double.infinity,
-                  height: 500,
-                  fit: BoxFit.cover,
-                ),
-                Container(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      SizedBox(
-                        height: 10,
+                Stack(
+                  alignment: AlignmentDirectional.bottomCenter,
+                  children: [
+                    Image.network(
+                      'https://static1.showtimes.com/poster/660x980/riverdale-netflix-131772.jpg',
+                      width: double.infinity,
+                      height: 500,
+                      fit: BoxFit.cover,
+                    ),
+                    Container(
+                      height: 500,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: AlignmentDirectional.topCenter,
+                          end: AlignmentDirectional.bottomCenter,
+                          stops: [0.6, 1.0],
+                          colors: [
+                            Colors.transparent,
+                            Colors.black,
+                          ],
+                        ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    ),
+                    Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          Text(
-                            '뱀파이어',
-                            style: TextStyle(color: Colors.white),
+                          SizedBox(
+                            height: 10,
                           ),
-                          Text(
-                            '1980년대',
-                            style: TextStyle(color: Colors.white),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Text(
+                                '뱀파이어',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              Text(
+                                '1980년대',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              Text(
+                                '실화 바탕',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              Text(
+                                '응원해 주고 싶은 캐릭터',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ],
                           ),
-                          Text(
-                            '실화 바탕',
-                            style: TextStyle(color: Colors.white),
+                          SizedBox(
+                            height: 10,
                           ),
-                          Text(
-                            '응원해 주고 싶은 캐릭터',
-                            style: TextStyle(color: Colors.white),
-                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              FlatButton(
+                                child: Column(
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                    ),
+                                    Text(
+                                      '내가 찜한 콘텐츠',
+                                      style: TextStyle(color: Colors.grey),
+                                    )
+                                  ],
+                                ),
+                                onPressed: () {},
+                              ),
+                              RaisedButton(
+                                color: Colors.white,
+                                child: Row(
+                                  children: <Widget>[
+                                    Icon(Icons.play_arrow),
+                                    Text('재생')
+                                  ],
+                                ),
+                                onPressed: () {},
+                              ),
+                              FlatButton(
+                                child: Column(
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.info_outline,
+                                      color: Colors.white,
+                                    ),
+                                    Text(
+                                      '정보',
+                                      style: TextStyle(color: Colors.grey),
+                                    )
+                                  ],
+                                ),
+                                onPressed: () {},
+                              ),
+                            ],
+                          )
                         ],
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          FlatButton(
-                            child: Column(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.check,
-                                  color: Colors.white,
-                                ),
-                                Text(
-                                  '내가 찜한 콘텐츠',
-                                  style: TextStyle(color: Colors.grey),
-                                )
-                              ],
-                            ),
-                            onPressed: () {},
-                          ),
-                          RaisedButton(
-                            color: Colors.white,
-                            child: Row(
-                              children: <Widget>[
-                                Icon(Icons.play_arrow),
-                                Text('재생')
-                              ],
-                            ),
-                            onPressed: () {},
-                          ),
-                          FlatButton(
-                            child: Column(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.info_outline,
-                                  color: Colors.white,
-                                ),
-                                Text(
-                                  '정보',
-                                  style: TextStyle(color: Colors.grey),
-                                )
-                              ],
-                            ),
-                            onPressed: () {},
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -164,14 +200,14 @@ class _NetflixMainPageState extends State<NetflixMainPage> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: <Widget>[
-                  for (var i = 1; i < 10; i++)
+                  for (var i = 0; i < preview.previews.length; i++)
                     Padding(
                       child: SizedBox(
                         width: 150,
                         height: 150,
                         child: CircleAvatar(
-                          backgroundImage: NetworkImage(
-                              'https://static1.showtimes.com/poster/660x980/riverdale-netflix-131772.jpg'),
+                          backgroundImage:
+                              NetworkImage(preview.previews[i]['thumbnail']),
                         ),
                       ),
                       padding: const EdgeInsets.all(4),
@@ -194,10 +230,10 @@ class _NetflixMainPageState extends State<NetflixMainPage> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: <Widget>[
-                  for (var i = 1; i < 10; i++)
+                  for (var i = 0; i < hot.hots.length; i++)
                     Padding(
                       child: Image.network(
-                        'https://static1.showtimes.com/poster/660x980/riverdale-netflix-131772.jpg',
+                        hot.hots[i]['thumbnail'],
                         width: 140,
                         height: 160,
                         fit: BoxFit.cover,
@@ -222,10 +258,10 @@ class _NetflixMainPageState extends State<NetflixMainPage> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: <Widget>[
-                  for (var i = 1; i < 10; i++)
+                  for (var i = 0; i < original.originals.length; i++)
                     Padding(
                       child: Image.network(
-                        'https://static1.showtimes.com/poster/660x980/riverdale-netflix-131772.jpg',
+                        original.originals[i]['thumbnail'],
                         width: 140,
                         height: 300,
                         fit: BoxFit.cover,
